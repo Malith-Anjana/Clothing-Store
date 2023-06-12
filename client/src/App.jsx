@@ -1,7 +1,8 @@
 import Home from "./pages/Home";
+import Pay from "./pages/Pay";
 
 const App = () => {
-  return <Home/>;
+  return <Pay/>;
 };
 
 export default App;
