@@ -1,9 +1,9 @@
 import { RemoveOutlined } from "@mui/icons-material";
 import styled from "styled-components";
-import Announcement from "../components/Announcement";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
-import Newsletter from "../components/Newsletter";
+import Announcement from "../components/Annoucement/Announcement";
+import Footer from "../components/Footer/Footer";
+import Navbar from "../components/Navbar/Navbar";
+import Newsletter from "../components/Newsletter/Newsletter";
 import { mobile } from "../responsive";
 
 const Container = styled.div``;
