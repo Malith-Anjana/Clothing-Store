@@ -4,6 +4,8 @@ import Announcement from "../components/Annoucement/Announcement";
 import Footer from "../components/Footer/Footer";
 import Navbar from "../components/Navbar/Navbar";
 import { mobile } from "../responsive";
+import { useSelector } from "react-redux";
+import StripCheckout from 'react-stripe-checkout'
 
 const Container = styled.div``;
 
@@ -84,7 +86,7 @@ const ProductColor = styled.div`
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background-color: ${(props) => props.color};
+  background-color: ${(props) => props.color.toLowerCase()};
 `;
 
 const ProductSize = styled.span``;
@@ -154,6 +156,8 @@ const Button = styled.button`
 `;
 
 const Cart = () => {
+  const cart = useSelector(state=> state.cart)
+  console.log(cart);
   return (
     <Container>
       <Navbar />
@@ -170,63 +174,39 @@ const Cart = () => {
         </Top>
         <Bottom>
           <Info>
-            <Product>
+            {cart.products.map((p)=> <Product>
               <ProductDetail>
-                <Image src="https://hips.hearstapps.com/vader-prod.s3.amazonaws.com/1614188818-TD1MTHU_SHOE_ANGLE_GLOBAL_MENS_TREE_DASHERS_THUNDER_b01b1013-cd8d-48e7-bed9-52db26515dc4.png?crop=1xw:1.00xh;center,top&resize=480%3A%2A" />
+                <Image src={p.img} />
                 <Details>
                   <ProductName>
-                    <b>Product:</b> JESSIE THUNDER SHOES
+                    <b>Product:</b> {p.title}
                   </ProductName>
                   <ProductId>
-                    <b>ID:</b> 93813718293
+                    <b>ID:</b> {p._id}
                   </ProductId>
-                  <ProductColor color="black" />
+                  <ProductColor color={p.color} />
                   <ProductSize>
-                    <b>Size:</b> 37.5
+                    <b>Size:</b> {p.size}
                   </ProductSize>
                 </Details>
               </ProductDetail>
               <PriceDetail>
                 <ProductAmountContainer>
                   <AddOutlined />
-                  <ProductAmount>2</ProductAmount>
+                  <ProductAmount>{p.quantity}</ProductAmount>
                   <RemoveOutlined />
                 </ProductAmountContainer>
-                <ProductPrice>$ 30</ProductPrice>
+                <ProductPrice>$ {p.price * p.quantity}</ProductPrice>
               </PriceDetail>
-            </Product>
+            </Product>)}
             <Hr />
-            <Product>
-              <ProductDetail>
-                <Image src="https://i.pinimg.com/originals/2d/af/f8/2daff8e0823e51dd752704a47d5b795c.png" />
-                <Details>
-                  <ProductName>
-                    <b>Product:</b> HAKURA T-SHIRT
-                  </ProductName>
-                  <ProductId>
-                    <b>ID:</b> 93813718293
-                  </ProductId>
-                  <ProductColor color="gray" />
-                  <ProductSize>
-                    <b>Size:</b> M
-                  </ProductSize>
-                </Details>
-              </ProductDetail>
-              <PriceDetail>
-                <ProductAmountContainer>
-                  <AddOutlined />
-                  <ProductAmount>1</ProductAmount>
-                  <RemoveOutlined />
-                </ProductAmountContainer>
-                <ProductPrice>$ 20</ProductPrice>
-              </PriceDetail>
-            </Product>
+            
           </Info>
           <Summary>
             <SummaryTitle>ORDER SUMMARY</SummaryTitle>
             <SummaryItem>
               <SummaryItemText>Subtotal</SummaryItemText>
-              <SummaryItemPrice>$ 80</SummaryItemPrice>
+              <SummaryItemPrice>$ {cart.totalPrice}</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem>
               <SummaryItemText>Estimated Shipping</SummaryItemText>
