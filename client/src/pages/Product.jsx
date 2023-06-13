@@ -115,25 +115,21 @@ const Button = styled.button`
   }
 `;
 
-const Product = () => {
+const Product = (item) => {
   return (
     <Container>
       <Navbar />
       <Announcement />
       <Wrapper>
         <ImgContainer>
-          <Image src="https://i.ibb.co/S6qMxwr/jean.jpg" />
+          <Image src={item.img} />
         </ImgContainer>
         <InfoContainer>
-          <Title>Denim Jumpsuit</Title>
+          <Title>{item.title}</Title>
           <Desc>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
-            venenatis, dolor in finibus malesuada, lectus ipsum porta nunc, at
-            iaculis arcu nisi sed mauris. Nulla fermentum vestibulum ex, eget
-            tristique tortor pretium ut. Curabitur elit justo, consequat id
-            condimentum ac, volutpat ornare.
+            {item.desc}
           </Desc>
-          <Price>$ 20</Price>
+          <Price>$ {item.price}</Price>
           <FilterContainer>
             <Filter>
               <FilterTitle>Color</FilterTitle>
