@@ -5,10 +5,12 @@ import Footer from "../components/Footer/Footer";
 import Navbar from "../components/Navbar/Navbar";
 import { mobile } from "../responsive";
 import { useSelector } from "react-redux";
-import StripCheckout from 'react-stripe-checkout'
-
+import StripeCheckout from "react-stripe-checkout";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { userRequest } from "../requestMethods";
+const KEY = import.meta.env.VITE_STRIPE_KEY;
 const Container = styled.div``;
-
 const Wrapper = styled.div`
   padding: 20px;
   ${mobile({ padding: "10px" })}
@@ -49,7 +51,6 @@ const Bottom = styled.div`
   display: flex;
   justify-content: space-between;
   ${mobile({ flexDirection: "column" })}
-
 `;
 
 const Info = styled.div`
@@ -156,8 +157,31 @@ const Button = styled.button`
 `;
 
 const Cart = () => {
-  const cart = useSelector(state=> state.cart)
-  console.log(cart);
+  const cart = useSelector((state) => state.cart);
+  const [stripeToken, setStripeToken] = useState(null);
+  const navigate = useNavigate();
+
+  const onToken = (token) => {
+    setStripeToken(token);
+  };
+  const stripeTotalPrice = cart.totalPrice * 100;
+  useEffect(() => {
+    const makeRequest = async () => {
+      
+      console.log(stripeTotalPrice);
+      try {
+        const res = await userRequest.post("/checkout/payment", {
+          tokenId: stripeToken?.id,
+          amount: stripeTotalPrice,
+        });
+        navigate("/success", { data: res.data });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+     makeRequest();
+  }, [stripeToken, cart.price, navigate]);
+
   return (
     <Container>
       <Navbar />
@@ -172,35 +196,37 @@ const Cart = () => {
           </TopTexts>
           <TopButton type="filled">CHECKOUT NOW</TopButton>
         </Top>
+        <h1>{stripeTotalPrice}</h1>
         <Bottom>
           <Info>
-            {cart.products.map((p)=> <Product>
-              <ProductDetail>
-                <Image src={p.img} />
-                <Details>
-                  <ProductName>
-                    <b>Product:</b> {p.title}
-                  </ProductName>
-                  <ProductId>
-                    <b>ID:</b> {p._id}
-                  </ProductId>
-                  <ProductColor color={p.color} />
-                  <ProductSize>
-                    <b>Size:</b> {p.size}
-                  </ProductSize>
-                </Details>
-              </ProductDetail>
-              <PriceDetail>
-                <ProductAmountContainer>
-                  <AddOutlined />
-                  <ProductAmount>{p.quantity}</ProductAmount>
-                  <RemoveOutlined />
-                </ProductAmountContainer>
-                <ProductPrice>$ {p.price * p.quantity}</ProductPrice>
-              </PriceDetail>
-            </Product>)}
+            {cart.products.map((p) => (
+              <Product>
+                <ProductDetail>
+                  <Image src={p.img} />
+                  <Details>
+                    <ProductName>
+                      <b>Product:</b> {p.title}
+                    </ProductName>
+                    <ProductId>
+                      <b>ID:</b> {p._id}
+                    </ProductId>
+                    <ProductColor color={p.color} />
+                    <ProductSize>
+                      <b>Size:</b> {p.size}
+                    </ProductSize>
+                  </Details>
+                </ProductDetail>
+                <PriceDetail>
+                  <ProductAmountContainer>
+                    <AddOutlined />
+                    <ProductAmount>{p.quantity}</ProductAmount>
+                    <RemoveOutlined />
+                  </ProductAmountContainer>
+                  <ProductPrice>$ {p.price * p.quantity}</ProductPrice>
+                </PriceDetail>
+              </Product>
+            ))}
             <Hr />
-            
           </Info>
           <Summary>
             <SummaryTitle>ORDER SUMMARY</SummaryTitle>
@@ -218,9 +244,20 @@ const Cart = () => {
             </SummaryItem>
             <SummaryItem type="total">
               <SummaryItemText>Total</SummaryItemText>
-              <SummaryItemPrice>$ 80</SummaryItemPrice>
+              <SummaryItemPrice>$ {cart.totalPrice}</SummaryItemPrice>
             </SummaryItem>
-            <Button>CHECKOUT NOW</Button>
+            <StripeCheckout
+              name="clothing Store"
+              image="https://static.vecteezy.com/system/resources/thumbnails/002/002/403/small/man-with-beard-avatar-character-isolated-icon-free-vector.jpg"
+              token={onToken}
+              shippingAddress
+              billingAddress
+              description={"your total is $" + stripeTotalPrice/100}
+              stripeKey={KEY}
+              amount={stripeTotalPrice}
+            >
+              <Button>CHECKOUT NOW</Button>
+            </StripeCheckout>
           </Summary>
         </Bottom>
       </Wrapper>

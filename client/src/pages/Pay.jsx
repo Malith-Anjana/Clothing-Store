@@ -4,7 +4,7 @@ import axios from 'axios'
 
 const Pay = () => {
     const [stripeToken, setStripeToken] = useState(null);
-    const KEY = "pk_test_51NICeVB2COcHibL75G93mCwl3HLjM3VWUAYM4wrpyqryT4Iweclsjapsp9kN481eVFPPzrLYvIgO2astUqYhplzc00iE5c8GoQ"
+   
 
     const onToken = (token) => {
         setStripeToken(token);
@@ -32,7 +32,7 @@ const Pay = () => {
       shippingAddress
       billingAddress
       description="your total is $20"
-      stripeKey={KEY}
+      stripeKey={process.env.STRIPE_KEY}
       amount={2000}
     >
       <button
